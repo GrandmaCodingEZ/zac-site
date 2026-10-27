@@ -3,73 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zachary Spencer — Paid Ads for Florida Tree Services</title>
-<meta name="description" content="Zachary Spencer runs paid advertising and lead follow-up for tree service businesses across Florida. Based in Port St. Lucie.">
-<meta name="theme-color" content="#14281d">
+<title>Zachary Spencer — paid ads, dialers, bots</title>
+<meta name="description" content="Zachary Spencer builds tools and runs paid ads for tree service businesses in Florida. Based in Port St. Lucie. Press a number to connect.">
+<meta name="theme-color" content="#07090a">
+<link rel="canonical" href="https://zacharyspencer.dev/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zachary Spencer — paid ads, dialers, bots">
+<meta property="og:description" content="I build tools and run paid ads for tree service businesses in Florida. Press a number to connect.">
+<meta property="og:url" content="https://zacharyspencer.dev/">
+<meta property="og:image" content="https://zacharyspencer.dev/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#f6f4ee;--ink:#17231c;--muted:#5b6a60;--accent:#1f6b3a;--line:#dcd8cc;--card:#fff}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
-  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
-  header{padding:28px 0 8px}
-  header .name{font-weight:700;font-size:18px;letter-spacing:-.01em}
-  header .name span{color:var(--muted);font-weight:500}
-  .hero{padding:48px 0 32px}
-  h1{font-size:clamp(30px,5vw,44px);line-height:1.1;margin:0 0 16px;letter-spacing:-.02em}
-  .lead{font-size:19px;color:var(--muted);margin:0 0 24px;max-width:600px}
-  .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600}
-  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);margin-left:8px}
-  section{padding:32px 0;border-top:1px solid var(--line)}
-  h2{font-size:22px;margin:0 0 14px;letter-spacing:-.01em}
-  p{margin:0 0 14px}
-  ul{padding-left:20px;margin:0 0 14px}
-  li{margin-bottom:6px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
-  .card strong{display:block;margin-bottom:4px}
-  .contact{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
-  .contact a{color:var(--accent)}
-  footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:14px}
-  footer a{color:var(--muted)}
-  footer .legal{margin-top:8px}
-  @media (prefers-color-scheme:dark){
-    :root{--bg:#101712;--ink:#edf0ea;--muted:#a3b0a7;--accent:#5fbf84;--line:#243128;--card:#172019}
-    .btn{color:#0f1a13}
-  }
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-<header class="wrap">
-  <div class="name">Zachary Spencer <span>· Port St. Lucie, FL</span></div>
-</header>
+<a class="skip" href="#about">Skip to content</a>
 
-<main class="wrap">
-  <div class="hero">
-    <h1>I run paid ads for tree service businesses in Florida.</h1>
-    <p class="lead">Google and Meta campaigns that bring in estimate requests, plus the follow-up so those requests turn into booked jobs. I work with a small number of owners across the state.</p>
-    <a class="btn" href="#contact">Get in touch</a>
-    <a class="btn ghost" href="#how">How it works</a>
+<header class="console" id="dialer">
+  <div class="console__bar">
+    <h1 class="console__title">Zachary Spencer</h1>
+    <p class="console__meta"><span class="console__dot" aria-hidden="true"></span>power dialer · line 1 · Port St. Lucie, FL</p>
   </div>
 
-  <section id="about">
-    <h2>About me</h2>
-    <p>I'm Zac. I'm based in Port St. Lucie and study accounting and analytics at the University of South Florida. For the past year I've been building and running ad campaigns for tree service owners — removals, trimming, stump grinding, storm cleanup — and handling the lead follow-up that most crews don't have time for.</p>
-    <p>I keep it simple: you tell me the service area and how many extra jobs a week your crews can take on, I build and run the campaigns, and you only hear from me when there's an estimate to go look at.</p>
+  <section class="log" aria-label="Simulated call log">
+    <h2 class="log__head"><span>Call log</span><span class="log__count" id="log-count" aria-hidden="true">0 dialed</span></h2>
+    <p class="sr-only">A decorative, simulated call log. The business names are fictional.</p>
+    <ol class="log__list" id="log" aria-hidden="true"></ol>
   </section>
 
-  <section id="how">
-    <h2>How it works</h2>
-    <div class="grid">
-      <div class="card"><strong>1. Quick call</strong>We talk through your service area, your crews, and what you're doing now for leads.</div>
-      <div class="card"><strong>2. Campaigns go live</strong>I build the ads and landing pages and run them in your area. You approve the budget before anything spends.</div>
-      <div class="card"><strong>3. Estimates come in</strong>Homeowner requests come to you by call and text. I follow up on the ones that don't answer so they don't go cold.</div>
+  <section class="pad" aria-label="Keypad navigation">
+    <div class="lcd" id="lcd" role="status" aria-live="polite" aria-atomic="true"><span class="lcd__text" id="lcd-text">Zachary Spencer</span><span class="lcd__cursor" aria-hidden="true"></span></div>
+    <div class="keys" role="group" aria-label="Keypad. Press a number to go to a section.">
+      <button class="key" type="button" data-key="1"><span class="key__num">1</span> <span class="key__label">About</span></button>
+      <button class="key" type="button" data-key="2"><span class="key__num">2</span> <span class="key__label">Work</span></button>
+      <button class="key" type="button" data-key="3"><span class="key__num">3</span> <span class="key__label">Projects</span></button>
+      <button class="key" type="button" data-key="4"><span class="key__num">4</span> <span class="key__label">Now</span></button>
+      <button class="key" type="button" data-key="5"><span class="key__num">5</span> <span class="key__label">Writing</span></button>
+      <button class="key" type="button" data-key="6"><span class="key__num">6</span> <span class="key__label">Contact</span></button>
+      <button class="key key--blank" type="button" data-key="7"><span class="key__num">7</span> <span class="key__label"><span class="sr-only">not in service</span></span></button>
+      <button class="key key--blank" type="button" data-key="8"><span class="key__num">8</span> <span class="key__label"><span class="sr-only">not in service</span></span></button>
+      <button class="key key--blank" type="button" data-key="9"><span class="key__num">9</span> <span class="key__label"><span class="sr-only">not in service</span></span></button>
+      <button class="key key--fn" type="button" data-key="*" aria-pressed="false"><span class="key__num">*</span> <span class="key__label">Sound</span></button>
+      <button class="key key--call" type="button" data-key="0"><span class="key__num">0</span> <span class="key__label">Call Zac<span class="sr-only">, opens the chat</span></span></button>
+      <button class="key key--fn" type="button" data-key="#" aria-pressed="true"><span class="key__num">#</span> <span class="key__label">Motion</span></button>
     </div>
+    <p class="hint">press a number</p>
+  </section>
+</header>
+
+<svg class="tree" aria-hidden="true" focusable="false"></svg>
+
+<main id="main">
+
+  <section class="sec" id="about" tabindex="-1">
+    <p class="sec__line">line 1 · about</p>
+    <h2>About</h2>
+    <p>I'm Zac. I live in Port St. Lucie, Florida, and I study accounting and analytics at the University of South Florida.</p>
+    <p>I build tools and run paid ads for tree service businesses. Google and Meta campaigns, the landing pages they point to, and the follow-up that turns an estimate request into a booked job.</p>
+    <p>Most of what I build exists because I didn't want to pay for a worse version of it. The dialer at the top of this page is a stylized copy of one of those tools.</p>
+    <p>Outside of that, I'm studying for the LSAT.</p>
   </section>
 
-  <section id="services">
-    <h2>What I do</h2>
+  <section class="sec" id="work" tabindex="-1">
+    <p class="sec__line">line 2 · work</p>
+    <h2>Work</h2>
+    <p>I run paid ads for tree service businesses in Florida. Google and Meta campaigns that bring in estimate requests, plus the follow-up so those requests turn into booked jobs. I work with a small number of owners across the state.</p>
+
+    <h3>How it works</h3>
+    <ol class="steps">
+      <li><strong>Quick call.</strong> We talk through your service area, your crews, and what you're doing now for leads.</li>
+      <li><strong>Campaigns go live.</strong> I build the ads and landing pages and run them in your area. You approve the budget before anything spends.</li>
+      <li><strong>Estimates come in.</strong> Homeowner requests come to you by call and text. I follow up on the ones that don't answer so they don't go cold.</li>
+    </ol>
+
+    <h3>What I do</h3>
     <ul>
       <li>Google Search and Local Services ads for tree removal, trimming, and stump grinding</li>
       <li>Meta (Facebook / Instagram) campaigns for storm and seasonal work</li>
@@ -79,28 +93,90 @@
     </ul>
   </section>
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <div class="contact">
-      <p>The fastest way to reach me is the chat bubble on this page — leave your name and number and I'll text you back. Or:</p>
-      <p>
-        <strong>Zachary Spencer</strong><br>
-        829 Southeast Cavern Avenue, Port Saint Lucie, FL 34983<br>
-        Phone: <a href="tel:+17722818906">(772) 281-8906</a><br>
-        Email: <a href="mailto:zacharyspenceremail@gmail.com">zacharyspenceremail@gmail.com</a>
-      </p>
-      <p style="margin:0;color:var(--muted);font-size:14px">If you leave your number in the chat and check the consent box, I may text you about your inquiry and, only if you opt in separately, about my services. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help.</p>
-    </div>
+  <section class="sec" id="projects" tabindex="-1">
+    <p class="sec__line">line 3 · projects</p>
+    <h2>Projects</h2>
+    <ul class="projects">
+      <li class="project">
+        <div class="project__shot" aria-hidden="true"><span>Power Dialer</span></div>
+        <h3>Power Dialer</h3>
+        <p>Twilio-based cold-calling dialer with answering-machine detection. Built instead of paying for a SaaS dialer.</p>
+        <p class="tags"><span>Node</span><span>Twilio</span></p>
+      </li>
+      <li class="project">
+        <div class="project__shot" aria-hidden="true"><span>Kai Stone AI</span></div>
+        <h3>Kai Stone AI</h3>
+        <p>RAG chatbot over a creator's YouTube transcripts, deployed as a Discord bot.</p>
+        <p class="tags"><span>Python</span><span>Discord</span></p>
+      </li>
+      <li class="project">
+        <div class="project__shot" aria-hidden="true"><span>Second Brain</span></div>
+        <h3>Second Brain</h3>
+        <p>Discord capture bot that files anything into an Obsidian vault.</p>
+        <p class="tags"><span>Python</span><span>Obsidian</span></p>
+      </li>
+      <li class="project">
+        <div class="project__shot" aria-hidden="true"><span>Client sites</span></div>
+        <h3>Client sites</h3>
+        <p>Several tree-service and local-business sites on a CRM backend, with missed-call text-back and review automation.</p>
+        <p class="tags"><span>HTML</span><span>CRM</span><span>Automation</span></p>
+      </li>
+      <li class="project">
+        <div class="project__shot" aria-hidden="true"><span>Ads agency ops</span></div>
+        <h3>Ads agency ops</h3>
+        <p>The lead follow-up and reporting system behind the client work.</p>
+        <p class="tags"><span>Google Ads</span><span>Meta</span><span>Reporting</span></p>
+      </li>
+    </ul>
   </section>
+
+  <section class="sec" id="now" tabindex="-1">
+    <p class="sec__line">line 4 · now</p>
+    <h2>Now</h2>
+    <p class="muted">What I'm doing this month. Updated October 2026.</p>
+    <!-- NOW: edit the list below. One <li> per item. -->
+    <ul class="now">
+      <li>Running Google and Meta campaigns for tree service clients heading into the dry season</li>
+      <li>Adding answering-machine detection tuning to the power dialer</li>
+      <li>Rebuilding this site as a dialer (you're looking at it)</li>
+      <li>Studying for the LSAT</li>
+      <li>Finishing the accounting and analytics degree at USF</li>
+    </ul>
+    <!-- /NOW -->
+  </section>
+
+  <section class="sec" id="writing" tabindex="-1">
+    <p class="sec__line">line 5 · writing</p>
+    <h2>Writing</h2>
+    <p>Coming soon.</p>
+  </section>
+
+  <section class="sec" id="contact" tabindex="-1">
+    <p class="sec__line">line 6 · contact</p>
+    <h2>Contact</h2>
+    <p>The fastest way to reach me is the chat bubble on this page. Leave your name and number and I'll text you back.</p>
+    <address class="contact">
+      <strong>Zachary Spencer</strong><br>
+      829 Southeast Cavern Avenue, Port Saint Lucie, FL 34983<br>
+      Phone: <a href="tel:+17722818906">(772) 281-8906</a><br>
+      Email: <a href="mailto:zacharyspenceremail@gmail.com">zacharyspenceremail@gmail.com</a>
+    </address>
+    <p class="muted small">If you leave your number in the chat and check the consent box, I may text you about your inquiry and, only if you opt in separately, about my services. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help.</p>
+    <p>or <a href="#dialer" class="press-zero" data-press="0">press 0</a> to text me from this page.</p>
+  </section>
+
 </main>
 
-<footer>
-  <div class="wrap">
-    <div>Zachary Spencer · 829 Southeast Cavern Avenue, Port Saint Lucie, FL 34983 · (772) 281-8906 · zacharyspenceremail@gmail.com</div>
-    <div class="legal"><a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Service</a></div>
-    <div class="legal">© 2026 Zachary Spencer. Paid advertising services, independently operated.</div>
+<footer class="foot">
+  <div class="foot__wrap">
+    <p>Zachary Spencer · 829 Southeast Cavern Avenue, Port Saint Lucie, FL 34983 · (772) 281-8906 · zacharyspenceremail@gmail.com</p>
+    <p><a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Service</a></p>
+    <p>© 2026 Zachary Spencer</p>
   </div>
   <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6adf9d556118072e0e9b12c1" data-source="WEB_USER"></script>
 </footer>
+
+<script type="module" src="/assets/dialer.js"></script>
+<script type="module" src="/assets/tree.js"></script>
 </body>
 </html>
