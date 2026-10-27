@@ -4,18 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Zachary Spencer — paid ads, dialers, bots</title>
-<meta name="description" content="Zachary Spencer builds tools and runs paid ads for tree service businesses in Florida. Based in Port St. Lucie. Press a number to connect.">
-<meta name="theme-color" content="#07090a">
+<meta name="description" content="Zachary Spencer builds tools and runs paid ads for tree service businesses in Florida. Based in Port St. Lucie. Dial a number to connect.">
+<meta name="theme-color" content="#0b0908">
 <link rel="canonical" href="https://zacharyspencer.dev/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Zachary Spencer — paid ads, dialers, bots">
-<meta property="og:description" content="I build tools and run paid ads for tree service businesses in Florida. Press a number to connect.">
+<meta property="og:description" content="I build tools and run paid ads for tree service businesses in Florida. Dial a number to connect.">
 <meta property="og:url" content="https://zacharyspencer.dev/">
 <meta property="og:image" content="https://zacharyspencer.dev/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" as="image" href="/assets/phone/body-720.webp" imagesrcset="/assets/phone/body-720.webp 720w, /assets/phone/body.webp 1000w" imagesizes="(max-width: 899px) 88vw, 46vw" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -26,36 +27,39 @@
 <body>
 <a class="skip" href="#about">Skip to content</a>
 
-<header class="console" id="dialer">
-  <div class="console__bar">
-    <h1 class="console__title">Zachary Spencer</h1>
-    <p class="console__meta"><span class="console__dot" aria-hidden="true"></span>power dialer · line 1 · Port St. Lucie, FL</p>
+<header class="hero" id="dialer">
+  <img class="hero__table" src="/assets/phone/table-900.webp" srcset="/assets/phone/table-900.webp 900w, /assets/phone/table.webp 2000w" sizes="100vw" alt="" aria-hidden="true" fetchpriority="high" width="2000" height="1125">
+
+  <div class="hero__copy">
+    <p class="hero__kicker">Zachary Spencer · Port St. Lucie, FL</p>
+    <h1>Paid ads, dialers, bots.</h1>
+    <p class="hero__lead">I build tools and run paid ads for tree service businesses in Florida. Dial a number to get where you're going.</p>
+
+    <p class="status" id="status" role="status" aria-live="polite" aria-atomic="true"><span class="status__dot" aria-hidden="true"></span><span id="status-text">Line 1 · ready</span></p>
+
+    <nav class="dir" aria-label="Directory. Each number dials a section.">
+      <ol class="dir__list">
+        <li><button type="button" class="dir__btn" data-key="1"><span class="dir__num">1</span> About</button></li>
+        <li><button type="button" class="dir__btn" data-key="2"><span class="dir__num">2</span> Work</button></li>
+        <li><button type="button" class="dir__btn" data-key="3"><span class="dir__num">3</span> Projects</button></li>
+        <li><button type="button" class="dir__btn" data-key="4"><span class="dir__num">4</span> Now</button></li>
+        <li><button type="button" class="dir__btn" data-key="5"><span class="dir__num">5</span> Writing</button></li>
+        <li><button type="button" class="dir__btn" data-key="6"><span class="dir__num">6</span> Contact</button></li>
+        <li><button type="button" class="dir__btn dir__btn--call" data-key="0"><span class="dir__num">0</span> Call Zac<span class="sr-only">, opens the chat</span></button></li>
+      </ol>
+      <p class="dir__toggles">
+        <button type="button" class="dir__toggle" data-toggle="sound" aria-pressed="false">Sound <span class="dir__val">off</span></button>
+        <button type="button" class="dir__toggle" data-toggle="motion" aria-pressed="true">Motion <span class="dir__val">on</span></button>
+      </p>
+    </nav>
+    <p class="hint">drag the dial, tap a hole, or press a number</p>
   </div>
 
-  <section class="log" aria-label="Simulated call log">
-    <h2 class="log__head"><span>Call log</span><span class="log__count" id="log-count" aria-hidden="true">0 dialed</span></h2>
-    <p class="sr-only">A decorative, simulated call log. The business names are fictional.</p>
-    <ol class="log__list" id="log" aria-hidden="true"></ol>
-  </section>
-
-  <section class="pad" aria-label="Keypad navigation">
-    <div class="lcd" id="lcd" role="status" aria-live="polite" aria-atomic="true"><span class="lcd__text" id="lcd-text">Zachary Spencer</span><span class="lcd__cursor" aria-hidden="true"></span></div>
-    <div class="keys" role="group" aria-label="Keypad. Press a number to go to a section.">
-      <button class="key" type="button" data-key="1"><span class="key__num">1</span> <span class="key__label">About</span></button>
-      <button class="key" type="button" data-key="2"><span class="key__num">2</span> <span class="key__label">Work</span></button>
-      <button class="key" type="button" data-key="3"><span class="key__num">3</span> <span class="key__label">Projects</span></button>
-      <button class="key" type="button" data-key="4"><span class="key__num">4</span> <span class="key__label">Now</span></button>
-      <button class="key" type="button" data-key="5"><span class="key__num">5</span> <span class="key__label">Writing</span></button>
-      <button class="key" type="button" data-key="6"><span class="key__num">6</span> <span class="key__label">Contact</span></button>
-      <button class="key key--blank" type="button" data-key="7"><span class="key__num">7</span> <span class="key__label"><span class="sr-only">not in service</span></span></button>
-      <button class="key key--blank" type="button" data-key="8"><span class="key__num">8</span> <span class="key__label"><span class="sr-only">not in service</span></span></button>
-      <button class="key key--blank" type="button" data-key="9"><span class="key__num">9</span> <span class="key__label"><span class="sr-only">not in service</span></span></button>
-      <button class="key key--fn" type="button" data-key="*" aria-pressed="false"><span class="key__num">*</span> <span class="key__label">Sound</span></button>
-      <button class="key key--call" type="button" data-key="0"><span class="key__num">0</span> <span class="key__label">Call Zac<span class="sr-only">, opens the chat</span></span></button>
-      <button class="key key--fn" type="button" data-key="#" aria-pressed="true"><span class="key__num">#</span> <span class="key__label">Motion</span></button>
-    </div>
-    <p class="hint">press a number</p>
-  </section>
+  <div class="phone" id="phone" aria-hidden="true">
+    <img class="phone__layer phone__body" src="/assets/phone/body-720.webp" srcset="/assets/phone/body-720.webp 720w, /assets/phone/body.webp 1000w" sizes="(max-width: 899px) 88vw, 46vw" alt="" width="1000" height="1000" fetchpriority="high" decoding="async">
+    <img class="phone__layer phone__handset" src="/assets/phone/handset-720.webp" srcset="/assets/phone/handset-720.webp 720w, /assets/phone/handset.webp 1000w" sizes="(max-width: 899px) 88vw, 46vw" alt="" width="1000" height="1000" decoding="async">
+    <img class="phone__layer phone__wheel" id="wheel" src="/assets/phone/wheel-720.webp" srcset="/assets/phone/wheel-720.webp 720w, /assets/phone/wheel.webp 1000w" sizes="(max-width: 899px) 88vw, 46vw" alt="" width="1000" height="1000" draggable="false" decoding="async">
+  </div>
 </header>
 
 <svg class="tree" aria-hidden="true" focusable="false"></svg>
@@ -67,7 +71,7 @@
     <h2>About</h2>
     <p>I'm Zac. I live in Port St. Lucie, Florida, and I study accounting and analytics at the University of South Florida.</p>
     <p>I build tools and run paid ads for tree service businesses. Google and Meta campaigns, the landing pages they point to, and the follow-up that turns an estimate request into a booked job.</p>
-    <p>Most of what I build exists because I didn't want to pay for a worse version of it. The dialer at the top of this page is a stylized copy of one of those tools.</p>
+    <p>Most of what I build exists because I didn't want to pay for a worse version of it. The phone at the top of this page is a nod to one of those tools, a cold-calling dialer.</p>
     <p>Outside of that, I'm studying for the LSAT.</p>
   </section>
 
@@ -138,7 +142,7 @@
     <ul class="now">
       <li>Running Google and Meta campaigns for tree service clients heading into the dry season</li>
       <li>Adding answering-machine detection tuning to the power dialer</li>
-      <li>Rebuilding this site as a dialer (you're looking at it)</li>
+      <li>Rebuilding this site around a rotary phone (you're looking at it)</li>
       <li>Studying for the LSAT</li>
       <li>Finishing the accounting and analytics degree at USF</li>
     </ul>

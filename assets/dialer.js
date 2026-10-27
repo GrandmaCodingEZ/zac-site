@@ -1,4 +1,4 @@
-// Dialer console: simulated call log, keypad navigation, LCD readout.
+// Rotary dial: drag or tap a hole to the finger stop, the dial returns, the call connects.
 // Vanilla JS module. No dependencies.
 
 const SECTIONS = {
@@ -10,57 +10,47 @@ const SECTIONS = {
   '6': { label: 'Contact', id: 'contact' },
 };
 
-// Fictional business names. Not real companies.
-const NAMES = [
-  'Sunshine Tree & Stump', 'Gulf Coast Arbor', 'Treasure Coast Canopy',
-  'Palmetto Ridge Tree Care', 'Indian River Arbor Works', 'Seabreeze Stump Grinding',
-  'Mangrove & Oak Tree Service', 'Cypress Bend Tree Service', 'Saw Palmetto Tree Pros',
-  'Lakewood Limb & Stump', 'Hurricane Ready Tree Service', 'Bayou Pine Tree & Crane',
-  'Sandhill Crane Tree Care', 'Live Oak Lane Arborists', 'Coquina Coast Tree Service',
-  'Everglade Edge Tree Works', 'St. Lucie Stump & Limb', 'Tarpon Bay Tree Service',
-  'Flatwoods Tree & Land', 'Sabal Palm Tree Care',
-];
-
-const IDLE_LINES = ['Zachary Spencer', 'Port St. Lucie, FL', 'paid ads · dialers · bots'];
-const MAX_ROWS = 14;
-const SEED_ROWS = 12;
+// Dial geometry, matching the render. Angles are degrees, counter-clockwise from 3 o'clock.
+const STOP = -35;
+const holeAngle = (i) => STOP + 28 + (i - 1) * 30;      // i = 1..10, 10 is "0"
+const travel = (i) => holeAngle(i) - STOP;               // clockwise degrees to the stop
+const RETURN_SPEED = 300;                                // degrees per second on the way back
+const PULL_SPEED = 420;                                  // degrees per second when auto-dialing
 
 const html = document.documentElement;
-const lcdText = document.getElementById('lcd-text');
-const logEl = document.getElementById('log');
-const logCount = document.getElementById('log-count');
-const keys = [...document.querySelectorAll('.key')];
-const soundKey = document.querySelector('[data-key="*"]');
-const motionKey = document.querySelector('[data-key="#"]');
+const phone = document.getElementById('phone');
+const wheel = document.getElementById('wheel');
+const status = document.getElementById('status-text');
+const dirButtons = [...document.querySelectorAll('[data-key]')];
+const soundBtn = document.querySelector('[data-toggle="sound"]');
+const motionBtn = document.querySelector('[data-toggle="motion"]');
 
 const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
 const state = {
   sound: false,
   motion: !reduceQuery.matches,
-  dialed: 0,
   busy: false,
-  idleIndex: 0,
+  angle: 0,
+  drag: null,
   idleTimer: 0,
-  logTimer: 0,
-  nameBag: [],
+  holdTimer: 0,
 };
 
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const rand = (min, max) => min + Math.random() * (max - min);
+const IDLE = ['Line 1 · ready', 'Zachary Spencer', 'Port St. Lucie, FL', 'paid ads · dialers · bots'];
+let idleIndex = 0;
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
-// ---------- LCD ----------
+// ---------- status line ----------
 
-function setLcd(text) {
-  lcdText.textContent = text;
-}
+function setStatus(text) { status.textContent = text; }
 
 function startIdle() {
   clearTimeout(state.idleTimer);
   const tick = () => {
     if (state.busy) return;
-    setLcd(IDLE_LINES[state.idleIndex % IDLE_LINES.length]);
-    state.idleIndex += 1;
+    setStatus(IDLE[idleIndex % IDLE.length]);
+    idleIndex += 1;
     state.idleTimer = setTimeout(tick, 3200);
   };
   tick();
@@ -69,148 +59,124 @@ function startIdle() {
 function hold(text, ms) {
   state.busy = true;
   clearTimeout(state.idleTimer);
-  setLcd(text);
   clearTimeout(state.holdTimer);
+  setStatus(text);
   state.holdTimer = setTimeout(() => { state.busy = false; startIdle(); }, ms);
 }
 
-// ---------- Motion / sound ----------
-
-function applyMotion() {
-  html.dataset.motion = state.motion ? 'on' : 'off';
-  motionKey.setAttribute('aria-pressed', String(state.motion));
-}
-
-function applySound() {
-  soundKey.setAttribute('aria-pressed', String(state.sound));
-}
+// ---------- sound / motion ----------
 
 const audio = {};
 function play(name) {
   if (!state.sound) return;
   try {
-    if (!audio[name]) {
-      audio[name] = new Audio(`/assets/sounds/${name}.mp3`);
-      audio[name].preload = 'auto';
-    }
+    if (!audio[name]) { audio[name] = new Audio(`/assets/sounds/${name}.mp3`); audio[name].preload = 'auto'; }
     audio[name].currentTime = 0;
-    audio[name].volume = 0.5;
+    audio[name].volume = name === 'tick' ? 0.35 : 0.5;
     audio[name].play().catch(() => {});
-  } catch { /* no audio, fine */ }
+  } catch { /* no audio */ }
 }
 
-// ---------- Call log ----------
+function applyToggles() {
+  html.dataset.motion = state.motion ? 'on' : 'off';
+  soundBtn.setAttribute('aria-pressed', String(state.sound));
+  motionBtn.setAttribute('aria-pressed', String(state.motion));
+  soundBtn.querySelector('.dir__val').textContent = state.sound ? 'on' : 'off';
+  motionBtn.querySelector('.dir__val').textContent = state.motion ? 'on' : 'off';
+}
 
-function nextName() {
-  if (state.nameBag.length === 0) {
-    state.nameBag = NAMES.slice().sort(() => Math.random() - 0.5);
+// ---------- wheel ----------
+
+function setAngle(deg, transitionMs) {
+  state.angle = deg;
+  wheel.style.transition = transitionMs && state.motion ? `transform ${transitionMs}ms linear` : 'none';
+  wheel.style.transform = `rotate(${deg}deg)`;
+}
+
+function geometry() {
+  const r = phone.getBoundingClientRect();
+  return { cx: r.left + r.width * 0.5, cy: r.top + r.height * 0.6569, radius: r.width * 0.151 };
+}
+
+function pointerAngle(e, g) {
+  // counter-clockwise degrees from 3 o'clock, y up
+  return Math.atan2(-(e.clientY - g.cy), e.clientX - g.cx) * 180 / Math.PI;
+}
+
+function nearestHole(theta) {
+  let best = null;
+  for (let i = 1; i <= 10; i += 1) {
+    let d = ((theta - holeAngle(i)) % 360 + 540) % 360 - 180;
+    d = Math.abs(d);
+    if (d < 17 && (!best || d < best.d)) best = { i, d };
   }
-  return state.nameBag.pop();
+  return best ? best.i : null;
 }
 
-function stamp() {
-  const d = new Date();
-  return [d.getHours(), d.getMinutes(), d.getSeconds()]
-    .map((n) => String(n).padStart(2, '0')).join(':');
+async function returnToRest() {
+  const from = state.angle;
+  if (from <= 0) return;
+  const ms = state.motion ? (from / RETURN_SPEED) * 1000 : 0;
+  setAngle(0, ms);
+  if (!ms) return;
+  // the governor's clicks on the way back
+  const ticks = Math.max(1, Math.round(from / 30));
+  for (let k = 0; k < ticks; k += 1) { play('tick'); await wait(ms / ticks); }
 }
 
-function outcome() {
-  const r = Math.random();
-  if (r < 0.5) return ['noanswer', 'No answer'];
-  if (r < 0.8) return ['voicemail', 'Voicemail'];
-  return ['connected', 'Connected'];
+async function pullTo(i) {
+  const target = travel(i);
+  const ms = state.motion ? (target / PULL_SPEED) * 1000 : 0;
+  setAngle(target, ms);
+  await wait(ms + 60);
 }
 
-function addRow(animate) {
-  const li = document.createElement('li');
-  li.className = 'log__row' + (animate ? ' is-new' : '');
-  const chip = document.createElement('span');
-  chip.className = 'chip chip--dialing';
-  chip.textContent = 'Dialing';
+// ---------- dialing ----------
 
-  const cells = [
-    ['log__time', stamp()],
-    ['log__name', nextName()],
-    ['log__num', '(772) ••• ••••'],
-  ];
-  for (const [cls, text] of cells) {
-    const span = document.createElement('span');
-    span.className = cls;
-    span.textContent = text;
-    li.appendChild(span);
-  }
-  li.appendChild(chip);
-  logEl.appendChild(li);
+let dialing = false;
 
-  while (logEl.children.length > MAX_ROWS) logEl.firstElementChild.remove();
-
-  state.dialed += 1;
-  logCount.textContent = `${state.dialed} dialed`;
-
-  const settle = () => {
-    const [cls, text] = outcome();
-    chip.className = `chip chip--${cls}`;
-    chip.textContent = text;
-  };
-  if (animate) setTimeout(settle, rand(900, 2200)); else settle();
+async function dial(i) {
+  // i is 1..10; 10 means the "0" hole
+  if (dialing) return;
+  dialing = true;
+  const key = i === 10 ? '0' : String(i);
+  phone.classList.add('is-dialing');
+  hold(`Dialing ${key}…`, 60000);
+  await returnToRest();
+  phone.classList.remove('is-dialing');
+  await connect(key);
+  dialing = false;
 }
 
-async function seedLog() {
-  if (!state.motion) {
-    for (let i = 0; i < SEED_ROWS; i += 1) addRow(false);
+async function autoDial(i) {
+  if (dialing || state.drag) return;
+  dialing = true;
+  const key = i === 10 ? '0' : String(i);
+  phone.classList.add('is-dialing');
+  hold(`Dialing ${key}…`, 60000);
+  await pullTo(i);
+  await returnToRest();
+  phone.classList.remove('is-dialing');
+  await connect(key);
+  dialing = false;
+}
+
+async function connect(key) {
+  const target = SECTIONS[key];
+  play('ringback');
+  await wait(state.motion ? 350 : 0);
+  play('connect');
+  phone.classList.add('is-off-hook');
+  setTimeout(() => phone.classList.remove('is-off-hook'), 4200);
+  if (target) {
+    hold(`Connected — ${target.label}`, 4000);
+    await wait(state.motion ? 250 : 0);
+    goTo(target.id);
     return;
   }
-  for (let i = 0; i < SEED_ROWS; i += 1) {
-    addRow(true);
-    await wait(400);
-  }
-  scheduleIdleRow();
+  if (key === '0') { await callZac(); return; }
+  hold(`${key} — not in service`, 2500);
 }
-
-function scheduleIdleRow() {
-  clearTimeout(state.logTimer);
-  state.logTimer = setTimeout(() => {
-    if (state.motion && !document.hidden) addRow(true);
-    scheduleIdleRow();
-  }, rand(6000, 10000));
-}
-
-// ---------- Chat widget ----------
-
-function openChat() {
-  try {
-    const lc = window.leadConnector;
-    if (lc && lc.chatWidget && typeof lc.chatWidget.openWidget === 'function') {
-      lc.chatWidget.openWidget();
-      return true;
-    }
-  } catch { /* fall through */ }
-  const widget = document.querySelector('chat-widget');
-  const root = widget && widget.shadowRoot;
-  const btn = root && root.querySelector('.lc_text-widget--bubble, button, [role="button"]');
-  if (btn) { btn.click(); return true; }
-  return false;
-}
-
-async function callZac() {
-  hold('Dialing 0…', 60000);
-  play('ringback');
-  await wait(600);
-  let opened = false;
-  for (let i = 0; i < 6 && !opened; i += 1) {
-    opened = openChat();
-    if (!opened) await wait(500);
-  }
-  if (opened) {
-    play('connect');
-    hold('Connected — Zac', 4000);
-  } else {
-    hold('Chat unavailable — see contact', 4000);
-    goTo('contact');
-  }
-}
-
-// ---------- Navigation ----------
 
 function goTo(id) {
   const el = document.getElementById(id);
@@ -220,67 +186,105 @@ function goTo(id) {
   history.replaceState(null, '', `#${id}`);
 }
 
-async function dial(key) {
-  const target = SECTIONS[key];
-  flash(key);
-  if (target) {
-    hold(`Dialing ${key}…`, 60000);
-    play('ringback');
-    await wait(600);
-    play('connect');
-    hold(`Connected — ${target.label}`, 4000);
-    await wait(350);
-    goTo(target.id);
-    return;
-  }
-  if (key === '0') { callZac(); return; }
-  if (key === '*') {
-    state.sound = !state.sound;
-    applySound();
-    if (state.sound) play('connect');
-    hold(state.sound ? 'Sound on' : 'Sound off', 2000);
-    return;
-  }
-  if (key === '#') {
-    state.motion = !state.motion;
-    applyMotion();
-    if (state.motion) scheduleIdleRow(); else clearTimeout(state.logTimer);
-    hold(state.motion ? 'Motion on' : 'Motion off', 2000);
-    return;
-  }
-  hold(`${key} — not in service`, 2000);
+function openChat() {
+  try {
+    const lc = window.leadConnector;
+    if (lc && lc.chatWidget && typeof lc.chatWidget.openWidget === 'function') { lc.chatWidget.openWidget(); return true; }
+  } catch { /* fall through */ }
+  const root = document.querySelector('chat-widget')?.shadowRoot;
+  const btn = root && root.querySelector('.lc_text-widget--bubble, button, [role="button"]');
+  if (btn) { btn.click(); return true; }
+  return false;
 }
 
-function flash(key) {
-  const btn = keys.find((k) => k.dataset.key === key);
-  if (!btn) return;
-  btn.classList.add('is-pressed');
-  setTimeout(() => btn.classList.remove('is-pressed'), 160);
+async function callZac() {
+  let opened = false;
+  for (let k = 0; k < 6 && !opened; k += 1) { opened = openChat(); if (!opened) await wait(500); }
+  if (opened) hold('Connected — Zac', 4000);
+  else { hold('Chat unavailable — see Contact', 4000); goTo('contact'); }
 }
 
-// ---------- Wire up ----------
+// ---------- pointer handling on the wheel ----------
 
-keys.forEach((btn) => btn.addEventListener('click', () => dial(btn.dataset.key)));
+wheel.addEventListener('pointerdown', (e) => {
+  if (dialing) return;
+  const g = geometry();
+  const dx = e.clientX - g.cx; const dy = e.clientY - g.cy;
+  const dist = Math.hypot(dx, dy);
+  if (dist < g.radius * 0.45 || dist > g.radius * 1.12) return;
+  const theta = pointerAngle(e, g);
+  const hole = nearestHole(theta);
+  if (!hole) return;
+  e.preventDefault();
+  try { wheel.setPointerCapture(e.pointerId); } catch { /* synthetic or stale pointer */ }
+  state.drag = { hole, startTheta: theta, max: travel(hole), t0: performance.now(), moved: 0, atStop: false };
+  setAngle(0, 0);
+  phone.classList.add('is-grabbed');
+});
 
-document.querySelectorAll('[data-press]').forEach((a) => {
-  a.addEventListener('click', (e) => { e.preventDefault(); dial(a.dataset.press); });
+wheel.addEventListener('pointermove', (e) => {
+  const d = state.drag;
+  if (!d) return;
+  const g = geometry();
+  const theta = pointerAngle(e, g);
+  let delta = d.startTheta - theta;             // clockwise is positive
+  delta = ((delta % 360) + 540) % 360 - 180;    // -180..180
+  if (delta < 0 && d.moved < 5) delta = 0;
+  const angle = clamp(delta, 0, d.max);
+  d.moved = Math.max(d.moved, angle);
+  if (angle >= d.max - 1 && !d.atStop) { d.atStop = true; play('tick'); }
+  if (angle < d.max - 1) d.atStop = false;
+  setAngle(angle, 0);
+});
+
+function endDrag(e) {
+  const d = state.drag;
+  if (!d) return;
+  state.drag = null;
+  phone.classList.remove('is-grabbed');
+  try { wheel.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+  const quickTap = performance.now() - d.t0 < 300 && d.moved < 6;
+  if (quickTap) { autoDial(d.hole); return; }
+  if (state.angle >= d.max - 8) { dial(d.hole); return; }
+  returnToRest();
+}
+wheel.addEventListener('pointerup', endDrag);
+wheel.addEventListener('pointercancel', endDrag);
+wheel.addEventListener('dragstart', (e) => e.preventDefault());
+
+// ---------- directory buttons, keyboard, toggles ----------
+
+dirButtons.forEach((btn) => btn.addEventListener('click', () => {
+  const k = btn.dataset.key;
+  autoDial(k === '0' ? 10 : Number(k));
+}));
+
+soundBtn.addEventListener('click', () => {
+  state.sound = !state.sound; applyToggles();
+  if (state.sound) play('connect');
+  hold(state.sound ? 'Sound on' : 'Sound off', 1800);
+});
+motionBtn.addEventListener('click', () => {
+  state.motion = !state.motion; applyToggles();
+  hold(state.motion ? 'Motion on' : 'Motion off', 1800);
 });
 
 document.addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const t = e.target;
   if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-  if (!/^[0-9*#]$/.test(e.key)) return;
+  if (e.key === '*') { e.preventDefault(); soundBtn.click(); return; }
+  if (e.key === '#') { e.preventDefault(); motionBtn.click(); return; }
+  if (!/^[0-9]$/.test(e.key)) return;
   e.preventDefault();
-  dial(e.key);
+  autoDial(e.key === '0' ? 10 : Number(e.key));
 });
 
-reduceQuery.addEventListener('change', (e) => {
-  state.motion = !e.matches;
-  applyMotion();
+document.querySelectorAll('[data-press]').forEach((a) => {
+  a.addEventListener('click', (ev) => { ev.preventDefault(); autoDial(a.dataset.press === '0' ? 10 : Number(a.dataset.press)); });
 });
 
-applyMotion();
-applySound();
+reduceQuery.addEventListener('change', (e) => { state.motion = !e.matches; applyToggles(); });
+
+applyToggles();
 startIdle();
-seedLog();
