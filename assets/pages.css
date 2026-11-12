@@ -1,0 +1,75 @@
+/* Shared styles for the home, about and writing pages. Same look as the original one-page site. */
+:root{--bg:#f6f4ee;--ink:#17231c;--muted:#5b6a60;--accent:#1f6b3a;--line:#dcd8cc;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+a{color:var(--accent)}
+
+header{padding:28px 0 8px}
+.site-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px}
+header .name{font-weight:700;font-size:18px;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+header .name span{color:var(--muted);font-weight:500}
+header nav{display:flex;gap:18px;font-size:15px;font-weight:500}
+header nav a{color:var(--muted);text-decoration:none}
+header nav a:hover,header nav a[aria-current="page"]{color:var(--accent)}
+
+.hero{padding:48px 0 32px}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.1;margin:0 0 16px;letter-spacing:-.02em}
+.tagline{font-size:clamp(19px,2.6vw,23px);line-height:1.35;font-weight:600;margin:0 0 14px;max-width:600px;letter-spacing:-.01em}
+.lead{font-size:19px;color:var(--muted);margin:0 0 24px;max-width:600px}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);margin-left:8px}
+
+section{padding:32px 0;border-top:1px solid var(--line)}
+h2{font-size:22px;margin:0 0 14px;letter-spacing:-.01em}
+h3{font-size:17px;margin:0 0 4px;letter-spacing:-.01em}
+p{margin:0 0 14px}
+ul,ol{padding-left:20px;margin:0 0 14px}
+li{margin-bottom:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.card strong{display:block;margin-bottom:4px}
+.contact{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
+.small{color:var(--muted);font-size:14px}
+
+/* Bio with portrait */
+.bio{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start}
+.bio figure{margin:0}
+.portrait{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.bio figcaption{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.4}
+.bio > div > :last-child{margin-bottom:0}
+@media (max-width:600px){
+  .bio{grid-template-columns:1fr}
+  .bio figure{max-width:180px}
+}
+
+/* Writing lists */
+.posts{list-style:none;padding:0;margin:0}
+.posts li{margin:0;padding:16px 0;border-top:1px solid var(--line)}
+.posts li:first-child{border-top:0;padding-top:0}
+.posts li:last-child{padding-bottom:0}
+.posts a{font-weight:600;font-size:18px;text-decoration:none;letter-spacing:-.01em}
+.posts a:hover{text-decoration:underline}
+.posts p{margin:4px 0 0;color:var(--muted)}
+.posts .date{font-size:14px}
+.more{margin:16px 0 0;font-weight:600}
+
+/* Article and about pages */
+.page{padding:40px 0 16px}
+.page h1{margin-bottom:12px}
+.byline{color:var(--muted);font-size:15px;margin:0 0 28px}
+.byline a{color:var(--muted)}
+.page h2{margin-top:32px}
+.page .lead{max-width:none}
+.back{display:inline-block;margin:0 0 20px;font-size:15px;text-decoration:none}
+.note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:28px 0 0}
+.note p:last-child{margin-bottom:0}
+
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:14px;margin-top:24px}
+footer a{color:var(--muted)}
+footer .legal{margin-top:8px}
+
+@media (prefers-color-scheme:dark){
+  :root{--bg:#101712;--ink:#edf0ea;--muted:#a3b0a7;--accent:#5fbf84;--line:#243128;--card:#172019}
+  .btn{color:#0f1a13}
+}
